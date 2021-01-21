@@ -3,6 +3,21 @@
 using namespace std;
 
 #define MAXN 100001
+vector<int> g[MAXN], color(MAXN), ans;
+
+bool dfs(int u) {
+	color[u] = 1;
+
+	for (auto &v : g[u]) {
+		if (color[v] == 2) continue;
+		else if (color[v] == 1) return true;
+		else if (dfs(v)) return true;
+	}
+
+	ans.push_back(u);
+	color[u] = 2;
+	return false;
+}
 
 int main() {
   ios_base::sync_with_stdio(false);
@@ -11,38 +26,16 @@ int main() {
   int n, m;
   cin >> n >> m;
 
-  vector<int> g[MAXN];
-  vector<int> ans;
-
-  int in[MAXN] = {};
-
   for (int i = 0; i < m; i++) {
-      int u, v;
-      cin >> u >> v;
+	  int u, v;
+	  cin >> u >> v;
 
-      g[u].push_back(v);
-
-      in[v]++;
+	  g[u].push_back(v);
   }
 
   queue<int> q;
   
-  for (int u = 1; u <= n; u++) if (in[u] == 0) q.push(u);
-
-  while (!q.empty()) {
-      int u = q.front();
-      q.pop();
-
-      ans.push_back(u);
-
-      for (auto &v : g[u]) {
-          in[v]--;
-
-          if (in[v] == 0) q.push(v);
-      }
-  }  
-  
-  reverse(ans.begin(), ans.end());
+  for (int u = 1; u <= n; u++) if (color[u] == 0 && dfs(u)) assert(false);
 
   for (auto u : ans) cout << u << " ";
   cout << endl;
